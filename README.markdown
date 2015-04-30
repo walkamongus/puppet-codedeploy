@@ -19,7 +19,7 @@ This module installs and enables the AWS CodeDeploy agent.
 
 ## Module Description
 
-The AWS Codedeploy allows you to automatically deploy applications from S3 or GitHub. This module installs any required package followed by the CodeDeploy agent. It then enables the codedeploy-agent service and ensures it is running.
+The AWS Codedeploy allows you to automatically deploy applications to AWS instances from S3 or GitHub. This module installs any required package followed by the CodeDeploy agent. It then enables the codedeploy-agent service and ensures it is running.
 
 ## Setup
 
