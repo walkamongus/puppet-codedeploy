@@ -12,18 +12,22 @@ class codedeploy::install {
       }
     }
     'Debian': {
-      $package_url  = 'https://s3.amazonaws.com/aws-codedeploy-us-east-1/latest/codedeploy-agent_all.deb'
-      $package_name = 'codedeploy-agent'
-      $service_name = 'codedeploy-agent'
-      package { [ 'awscli','ruby2.0' ]:
-        ensure => present,
+      if ! defined(Package['awscli']) {
+        package { 'awscli':
+          ensure => present,
+        }
+      }
+      if ! defined(Package['ruby2.0']) {
+        package { 'ruby2.0':
+          ensure => present,
+        }
       }
       exec { 'download_codedeploy_installer':
         command => '/usr/bin/aws s3 cp s3://aws-codedeploy-us-east-1/latest/install . --region us-east-1',
-        cwd     => '/home/ubuntu',
-        creates => '/home/ubuntu/install'
+        cwd     => '/tmp',
+        creates => '/tmp/install'
       }
-      file { '/home/ubuntu/install':
+      file { '/tmp/install':
         ensure    => present,
         owner     => 'root',
         group     => 'root',
@@ -32,12 +36,10 @@ class codedeploy::install {
         notify    => Exec['install_codedeploy_agent'],
       }
       exec { 'install_codedeploy_agent':
-        command     => '/home/ubuntu/install auto',
-        cwd         => '/home/ubuntu',
+        command     => '/tmp/install auto',
+        cwd         => '/tmp',
         refreshonly => true,
       }
-    }
-    'windows': {
     }
     default: {
       fail("${::operatingsystem} not supported")
