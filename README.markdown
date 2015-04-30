@@ -1,3 +1,7 @@
+# AWS CodeDeploy Puppet Module
+
+[![Build Status](https://travis-ci.org/walkamongus/puppet-codedeploy.svg)](https://travis-ci.org/walkamongus/puppet-codedeploy)
+
 #### Table of Contents
 
 1. [Overview](#overview)
