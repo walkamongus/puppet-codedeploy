@@ -1,6 +1,6 @@
 {
   "name": "walkamongus-codedeploy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Chadwick Banning",
   "summary": "Puppet module to manage the AWS CodeDeploy agent",
   "license": "Apache-2.0",
