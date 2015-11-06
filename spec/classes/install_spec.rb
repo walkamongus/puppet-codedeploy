@@ -17,6 +17,23 @@ describe 'codedeploy' do
       it { is_expected.to contain_package('codedeploy-agent').with_ensure('present') }
     end
   end
+   context "on windows-x86_64" do
+    let(:facts) do
+      {
+        :osfamily        => 'Windows',
+        :operatingsystem => 'Windows',
+      }
+    end
+
+    context "codedeploy class without any parameters" do
+      let(:params) {{ }}
+
+      it { is_expected.to compile.with_all_deps }
+
+      it { is_expected.to contain_package('codedeployagent').with_ensure('present') }
+    end
+  end
+
   context "on debian-x86_64" do
     let(:facts) do
       {

@@ -11,7 +11,12 @@ class codedeploy::install {
         source => $::codedeploy::package_url,
       }
     }
-    'Debian': {
+    'windows': {
+      package { $::codedeploy::package_name:
+        ensure => present,
+        source => $::codedeploy::package_url,
+      }
+    }    'Debian': {
       if ! defined(Package['awscli']) {
         package { 'awscli':
           ensure => present,
