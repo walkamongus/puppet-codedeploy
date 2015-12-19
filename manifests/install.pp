@@ -8,6 +8,7 @@ class codedeploy::install {
     'RedHat', 'Amazon': {
       package { $::codedeploy::package_name:
         ensure => present,
+        provider => rpm,
         source => $::codedeploy::package_url,
       }
     }
