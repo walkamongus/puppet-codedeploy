@@ -24,22 +24,17 @@ The AWS Codedeploy allows you to automatically deploy applications to AWS instan
 ### What codedeploy affects
 
 * Packages
-    * codedeploy-agent (RedHat)
+    * codedeploy-agent
     * awscli (Debian)
-    * ruby2.0 (Debian)
 * Services
     * codedeploy-agent daemon
 
 ## Usage
 
+The codedeploy-agent package requires a version of Ruby > 2.0.x to be installed under /usr/bin/ruby. This dependency must be satisfied prior to installing the codedeploy-agent package. The recommended way of doing this is via the [puppetlabs/ruby](https://forge.puppetlabs.com/puppetlabs/ruby) module.
+
 Install the AWS CodeDeploy agent and ensure the agent is running
 
-    class {'::codedeploy': }
-
-## Limitations
-
-This module has been tested on:
-* RedHat 6,7
-* Debian 6,7
-* Ubuntu 14.04
+    include '::ruby'
+    include '::codedeploy'
 

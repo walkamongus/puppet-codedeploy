@@ -1,6 +1,6 @@
 {
   "name": "walkamongus-codedeploy",
-  "version": "0.1.2",
+  "version": "1.0.1",
   "author": "Chadwick Banning",
   "summary": "Puppet module to manage the AWS CodeDeploy agent",
   "license": "Apache-2.0",
@@ -8,16 +8,10 @@
   "project_page": "https://github.com/walkamongus/puppet-codedeploy/",
   "issues_url": "https://github.com/walkamongus/puppet-codedeploy/issues",
   "tags": [ "codedeploy", "aws" ],
-  "requirements": [
-    {
-      "name": "puppet",
-      "version_requirement": ">= 3.3.0"
-    }
-  ],
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
-      "version_requirement": ">=4.0.0 <5.0.0"
+      "version_requirement": ">=3.2.0 <5.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -40,6 +34,16 @@
       "operatingsystemrelease": [
         "14.04"
       ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": ">= 3.2.0 < 2015.4.0"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.4.0 < 5.0.0"
     }
   ]
 }
