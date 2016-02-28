@@ -51,7 +51,6 @@ describe 'codedeploy' do
       it { is_expected.to contain_exec('install_codedeploy_agent').with_command('/tmp/install auto') }
       it { is_expected.to contain_file('/tmp/install').with({'mode' => '0740'}) }
       it { is_expected.to contain_package('awscli').with({'ensure' => 'present'}) }
-      it { is_expected.to contain_package('ruby2.0').with({'ensure' => 'present'}) }
     end
   end
 end
