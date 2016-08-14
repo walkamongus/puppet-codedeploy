@@ -6,7 +6,7 @@ class codedeploy::config {
   case $::osfamily {
     'RedHat', 'Amazon', 'Debian': {
       file {
-        $::config_location:
+        $::codedeploy::config_location:
           ensure  => file,
           content => template('codedeploy/codedeployagent.yml.erb'),
           mode    => '0644',
