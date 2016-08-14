@@ -9,20 +9,20 @@ class codedeploy::params {
       $package_url  = 'https://s3.amazonaws.com/aws-codedeploy-us-east-1/latest/codedeploy-agent_all.deb'
       $package_name = 'codedeploy-agent'
       $service_name = 'codedeploy-agent'
-      $config_location = '/var/log/aws/codedeploy-agent/codedeployagent.yml'
-      $log_dir = '/var/log/aws/codedeploy-agent'
-      $pid_dir = '/opt/codedeploy-agent/state/.pid'
+      $config_location = '/etc/codedeploy-agent/conf/codedeployagent.yml'
+      $log_dir = '/var/log/aws/codedeploy-agent/'
+      $pid_dir = '/opt/codedeploy-agent/state/.pid/'
       $program_name = 'codedeploy-agent'
       $root_dir = '/opt/codedeploy-agent/deployment-root'
-      $varbose = false
+      $verbose = false
     }
     'RedHat', 'Amazon': {
       $package_url  = 'https://s3.amazonaws.com/aws-codedeploy-us-east-1/latest/codedeploy-agent.noarch.rpm'
       $package_name = 'codedeploy-agent'
       $service_name = 'codedeploy-agent'
-      $config_location = '/var/log/aws/codedeploy-agent/codedeployagent.yml'
-      $log_dir = '/var/log/aws/codedeploy-agent'
-      $pid_dir = '/opt/codedeploy-agent/state/.pid'
+      $config_location = '/etc/codedeploy-agent/conf/codedeployagent.yml'
+      $log_dir = '/var/log/aws/codedeploy-agent/'
+      $pid_dir = '/opt/codedeploy-agent/state/.pid/'
       $program_name = 'codedeploy-agent'
       $root_dir = '/opt/codedeploy-agent/deployment-root'
       $verbose = false
