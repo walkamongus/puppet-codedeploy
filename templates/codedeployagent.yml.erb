@@ -1,0 +1,14 @@
+---
+:log_aws_wire: <%= @log_aws_wire %>
+:log_dir: '<%= @log_dir %>'
+<% if @pid_dir -%>
+:pid_dir: '<%= @pid_dir %>'
+<% end -%>
+<% if @program_name -%>
+:program_name: <%= @program_name %>
+<% end -%>
+:root_dir: '<%= @root_dir %>'
+:verbose: <%= @verbose %>
+:wait_between_runs: <%= @wait_between_runs %>
+:proxy_uri: <%= @proxy_uri %>
+:max_revisions: <%= @max_revisions %>
