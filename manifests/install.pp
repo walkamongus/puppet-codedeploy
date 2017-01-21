@@ -15,7 +15,14 @@ class codedeploy::install {
     'windows': {
       package { $::codedeploy::package_name:
         ensure => present,
+        provider => 'rpm',
         source => $::codedeploy::package_url,
+        require => Package['ruby'],
+      }
+      if ! defined(Package['ruby']) {
+        package { 'ruby':
+          ensure => present,
+        }
       }
     }
     'Debian': {
