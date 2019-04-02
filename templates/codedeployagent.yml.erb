@@ -1,0 +1,15 @@
+# Managed by puppet
+---
+:log_aws_wire: <%= scope['codedeploy::log_aws_wire'] %>
+:log_dir: <%= scope['codedeploy::log_dir'] %>
+<% if scope['codedeploy::pid_dir'] -%>
+:pid_dir: <%= scope['codedeploy::pid_dir'] %>
+<% end -%>
+<% if scope['codedeploy::program_name'] -%>
+:program_name: <%= scope['codedeploy::program_name'] %>
+<% end -%>
+:root_dir: <%= scope['codedeploy::root_dir'] %>
+:verbose: <%= scope['codedeploy::verbose'] %>
+:wait_between_runs: <%= scope['codedeploy::wait_between_runs'] %>
+:proxy_uri: <%= scope['codedeploy::proxy_uri'] %>
+:max_revisions: <%= scope['codedeploy::max_revisions'] %>
