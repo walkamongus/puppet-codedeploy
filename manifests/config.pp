@@ -1,20 +1,15 @@
-# == Class codedeploy::config
-#
-# This class is called from codedeploy.
-#
+# @summary Configures the CodeDeploy agent.
 class codedeploy::config {
-
-  case $::osfamily {
+  case $facts['os']['name'] {
     'RedHat', 'Amazon': {
-      file { $::codedeploy::config_location:
+      file { $codedeploy::config_location:
         ensure  => file,
         content => template('codedeploy/codedeployagent.yml.erb'),
         mode    => '0644',
-        owner   => root,
-        group   => root,
+        owner   => 'root',
+        group   => 'root',
       }
     }
-    default: {
-    }
+    default: {}
   }
 }

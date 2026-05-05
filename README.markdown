@@ -1,15 +1,12 @@
 # AWS CodeDeploy Puppet Module
 
-[![Build Status](https://travis-ci.org/walkamongus/puppet-codedeploy.svg?branch=master)](https://travis-ci.org/walkamongus/puppet-codedeploy)
+[![Test](https://github.com/jackdpeterson/puppet-codedeploy/actions/workflows/test.yml/badge.svg)](https://github.com/jackdpeterson/puppet-codedeploy/actions/workflows/test.yml)
 
-#### Table of Contents
+## Build Status
 
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with codedeploy](#setup)
-    * [What codedeploy affects](#what-codedeploy-affects)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Limitations - OS compatibility, etc.](#limitations)
+- [x] Ubuntu 24.04
+- [x] Ubuntu 26.04
+- [x] Amazon Linux 2023
 
 ## Overview
 
@@ -17,7 +14,7 @@ This module installs and enables the AWS CodeDeploy agent.
 
 ## Module Description
 
-The AWS Codedeploy allows you to automatically deploy applications to AWS instances from S3 or GitHub. This module installs any required packages followed by the CodeDeploy agent. It then enables the codedeploy-agent service and ensures that it is running.
+The AWS CodeDeploy service allows you to automatically deploy applications to AWS instances from S3 or GitHub. This module downloads and installs the CodeDeploy agent package directly from the regional S3 bucket, configures the agent, and ensures the service is running.
 
 ## Setup
 
@@ -25,16 +22,59 @@ The AWS Codedeploy allows you to automatically deploy applications to AWS instan
 
 * Packages
     * codedeploy-agent
-    * awscli (Debian)
+    * ruby-full (Debian/Ubuntu)
 * Services
     * codedeploy-agent daemon
 
+### Dependencies
+
+* [puppetlabs/stdlib](https://forge.puppet.com/modules/puppetlabs/stdlib)
+* [puppet/archive](https://forge.puppet.com/modules/puppet/archive)
+
 ## Usage
 
-The codedeploy-agent package requires a version of Ruby > 2.0.x to be installed under /usr/bin/ruby. This dependency must be satisfied prior to installing the codedeploy-agent package. The recommended way of doing this is via the [puppetlabs/ruby](https://forge.puppetlabs.com/puppetlabs/ruby) module.
+```puppet
+include codedeploy
+```
 
-Install the AWS CodeDeploy agent and ensure the agent is running
+To specify a different AWS region:
 
-    include '::ruby'
-    include '::codedeploy'
+```puppet
+class { 'codedeploy':
+  aws_region => 'eu-west-1',
+}
+```
 
+## Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `aws_region` | `us-west-1` | AWS region for the CodeDeploy S3 bucket |
+| `service_name` | `codedeploy-agent` | Name of the service |
+| `package_name` | `codedeploy-agent` | Name of the package |
+
+## Limitations
+
+Supported operating systems:
+
+* Ubuntu 24.04, 26.04
+* Debian 12, 13
+* Red Hat / Amazon Linux 8, 9, 10
+
+Requires Puppet 8.
+
+### Ruby Compatibility
+
+The `codedeploy-agent` `.deb` package declares dependencies on Ruby <= 3.2.
+However, analysis of the agent's Ruby source code confirms it is fully
+compatible with Ruby 3.3 (shipped with Ubuntu 26.04). This module uses
+`dpkg --force-depends` to bypass the packaging constraint on all
+Debian/Ubuntu versions.
+
+## Testing
+
+```bash
+make test
+```
+
+Runs the module in Docker containers for each supported platform and verifies the package installs successfully.

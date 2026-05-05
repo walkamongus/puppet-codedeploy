@@ -1,0 +1,33 @@
+ARG BASE_IMAGE=ubuntu:24.04
+FROM ${BASE_IMAGE}
+
+ARG PACKAGE_MANAGER=apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install puppet
+RUN if [ "$PACKAGE_MANAGER" = "apt" ]; then \
+      apt-get update && apt-get install -y puppet && apt-get clean; \
+    else \
+      rpm -Uvh https://yum.puppet.com/puppet8-release-el-9.noarch.rpm && \
+      yum install -y puppet-agent procps && yum clean all; \
+    fi
+
+ENV PATH="/opt/puppetlabs/bin:${PATH}"
+RUN puppet module install puppet-archive --version 7.1.0
+
+COPY . /etc/puppet/code/modules/codedeploy
+
+# Apply module (service may fail in Docker - that's expected)
+RUN puppet apply -e "include codedeploy" --modulepath=/etc/puppet/code/modules || true
+
+# Validate package is installed
+RUN if [ "$PACKAGE_MANAGER" = "apt" ]; then \
+      dpkg -s codedeploy-agent | grep "Status: install ok installed"; \
+    else \
+      rpm -q codedeploy-agent; \
+    fi
+
+# Validate expected binaries exist
+RUN test -x /opt/codedeploy-agent/bin/codedeploy-agent && \
+    test -x /opt/codedeploy-agent/bin/codedeploy-local && \
+    test -x /opt/codedeploy-agent/bin/install

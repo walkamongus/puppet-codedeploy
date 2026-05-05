@@ -1,51 +1,57 @@
-# == Class codedeploy::install
-#
-# This class is called from codedeploy for install.
-#
+# @summary Installs the AWS CodeDeploy agent.
 class codedeploy::install {
-
-  case $::osfamily {
+  case $facts['os']['name'] {
     'RedHat', 'Amazon': {
-      package { $::codedeploy::package_name:
+      $region = $codedeploy::aws_region
+      package { $codedeploy::package_name:
         ensure   => present,
         provider => 'rpm',
-        source   => $::codedeploy::package_url,
+        source   => "https://aws-codedeploy-${region}.s3.${region}.amazonaws.com/latest/codedeploy-agent.noarch.rpm",
       }
     }
-    'windows': {
-      package { $::codedeploy::package_name:
-        ensure => present,
-        source => $::codedeploy::package_url,
+    'Debian', 'Ubuntu': {
+      ensure_packages(['ruby-full'], { 'ensure' => 'present' })
+
+      $region  = $codedeploy::aws_region
+      $deb_url = "https://aws-codedeploy-${region}.s3.${region}.amazonaws.com/latest/codedeploy-agent_all.deb"
+
+      archive { '/tmp/codedeploy-agent.deb':
+        source  => $deb_url,
+        creates => '/tmp/codedeploy-agent.deb',
       }
-    }
-    'Debian': {
-      if ! defined(Package['awscli']) {
-        package { 'awscli':
-          ensure => present,
+      # The upstream .deb only lists ruby <= 3.2 in Depends, but the agent
+      # is verified compatible with Ruby 3.3. Patch the control file to add
+      # ruby3.3 as an alternative so dpkg/apt are satisfied natively.
+      # Only needed on OS versions that ship Ruby 3.3+ (Ubuntu 26.04+).
+      if $facts['os']['name'] == 'Ubuntu' and versioncmp($facts['os']['release']['major'], '26') >= 0 {
+        file { '/tmp/patch_codedeploy_deb.sh':
+          ensure => file,
+          source => 'puppet:///modules/codedeploy/patch_codedeploy_deb.sh',
+          mode   => '0755',
         }
-      }
-      exec { 'download_codedeploy_installer':
-        command => '/usr/bin/aws s3 cp s3://aws-codedeploy-us-east-1/latest/install . --region us-east-1',
-        cwd     => '/tmp',
-        creates => '/tmp/install',
-        require => Package['awscli'],
-      }
-      file { '/tmp/install':
-        ensure    => file,
-        owner     => 'root',
-        group     => 'root',
-        mode      => '0740',
-        subscribe => Exec['download_codedeploy_installer'],
-        notify    => Exec['install_codedeploy_agent'],
-      }
-      exec { 'install_codedeploy_agent':
-        command     => '/tmp/install auto',
-        cwd         => '/tmp',
-        refreshonly => true,
+        exec { 'patch_codedeploy_deb':
+          command => '/tmp/patch_codedeploy_deb.sh',
+          unless  => '/usr/bin/dpkg-deb -I /tmp/codedeploy-agent.deb | /usr/bin/grep -q ruby3.3',
+          require => [Archive['/tmp/codedeploy-agent.deb'], File['/tmp/patch_codedeploy_deb.sh']],
+          path    => ['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin'],
+        }
+        package { $codedeploy::package_name:
+          ensure   => present,
+          provider => 'dpkg',
+          source   => '/tmp/codedeploy-agent-patched.deb',
+          require  => [Exec['patch_codedeploy_deb'], Package['ruby-full']],
+        }
+      } else {
+        package { $codedeploy::package_name:
+          ensure   => present,
+          provider => 'dpkg',
+          source   => '/tmp/codedeploy-agent.deb',
+          require  => [Archive['/tmp/codedeploy-agent.deb'], Package['ruby-full']],
+        }
       }
     }
     default: {
-      fail("${::operatingsystem} not supported")
+      fail("${facts['os']['name']} not supported")
     }
   }
 }
